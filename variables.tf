@@ -1,17 +1,32 @@
 variable "client_id" {
-    Description = "Service principal GUID for the Azure terraform connection."
+    description = "Service principal GUID for the Azure terraform connection."
+    type = "string"
 }
 variable "client_secret" {
-    Description = "Service principal password."
+    description = "Service principal password."
+    type = "string"
 }
 variable "tenant_id" {
-    Description = "Tennat ID to connect to."
+    description = "Tennat ID to connect to."
+    type = "string"
 }
 variable "subscription_id" {
-    Description = "Azure account subscription."
+    description = "Azure account subscription."
+    type = "string"
 }
 
 variable "region" {
-    Description = "Azure region location."
-    Default = "UK South"
+    description = "Azure region location."
+    type = "string"
+    default = "UK South"
+}
+
+variable "os_username" {
+    description = "Username for machine to be provisioned."
+    type = "string"
+}
+
+variable "os_password" { 
+    description = "Password for machine to be provisioned"
+    type = "string"
 }
