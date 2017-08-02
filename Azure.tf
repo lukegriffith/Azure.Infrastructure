@@ -48,13 +48,13 @@ resource "azurerm_network_security_group" "dev-nsg" {
   resource_group_name = "${azurerm_resource_group.dev-res-1.name}"
 
   security_rule {
-    name                       = "SSH"
+    name                       = "RDP"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "22"
+    destination_port_range     = "3389"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -97,22 +97,30 @@ resource "azurerm_virtual_machine" "dev-vm-A" {
   network_interface_ids = ["${azurerm_network_interface.dev-int-01.id}"]
   vm_size               = "Standard_DS1_v2"
 
+/*
   storage_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
     sku       = "14.04.2-LTS"
     version   = "latest"
   }
+*/
+  storage_image_reference {
+    publisher = "MicrosoftWindowsServer"
+    offer= "WindowsServer"
+    sku = "2016-Datacenter-with-Containers"
+    version = "latest"
+  }
 
   storage_os_disk {
-    name              = "myosdisk1"
+    name              = "osdisk_vm_A"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
   storage_data_disk {
-    name              = "datadisk_new"
+    name              = "datadisk_vm_A"
     managed_disk_type = "Standard_LRS"
     create_option     = "Empty"
     lun               = 0
@@ -133,10 +141,11 @@ resource "azurerm_virtual_machine" "dev-vm-A" {
     admin_password = "${var.os_password}"
   }
 
+/*
   os_profile_linux_config {
     disable_password_authentication = false
   }
-
+*/
   tags {
     environment = "Dev"
   }
