@@ -4,7 +4,7 @@
 
 resource "azurerm_public_ip" "dev-public-ip-mgmt" {
 
-  name                         = "dev-public-ip-${count.index}"
+  name                         = "mgmt-public-ip-${count.index}"
   location                     = "${var.region}"
   resource_group_name          = "${azurerm_resource_group.dev-res-1.name}"
   public_ip_address_allocation = "static"
@@ -17,13 +17,13 @@ resource "azurerm_public_ip" "dev-public-ip-mgmt" {
 
 resource "azurerm_network_interface" "dev-int-mgmt" {
 
-  name                = "devint${count.index}"
+  name                = "mgmtint${count.index}"
   location            = "${var.region}"
   resource_group_name = "${azurerm_resource_group.dev-res-1.name}"
   network_security_group_id = "${azurerm_network_security_group.dev-nsg-mgmt.id}"
 
   ip_configuration {
-    name                          = "dev-int-${count.index}-ip"
+    name                          = "mgmt-int-${count.index}-ip"
     subnet_id                     = "${azurerm_subnet.dev-subnet-mgmt.id}"
     private_ip_address_allocation = "dynamic"
     public_ip_address_id = "${element(azurerm_public_ip.dev-public-ip-mgmt.*.id, count.index)}" 
@@ -48,14 +48,14 @@ resource "azurerm_virtual_machine" "mgmt-vm" {
   }
 
   storage_os_disk {
-    name              = "osdisk_vm_${count.index}"
+    name              = "mgmt-osdisk_vm_${count.index}"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Standard_LRS"
   }
 
   storage_data_disk {
-    name              = "datadisk_vm_${count.index}"
+    name              = "mgmt-datadisk_vm_${count.index}"
     managed_disk_type = "Standard_LRS"
     create_option     = "Empty"
     lun               = 0
