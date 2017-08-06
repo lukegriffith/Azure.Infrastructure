@@ -1,3 +1,3 @@
 # Terraform Plan
 
-![Plan](/plan.png "Plan")
+![Plan](./plan.png "Plan")
