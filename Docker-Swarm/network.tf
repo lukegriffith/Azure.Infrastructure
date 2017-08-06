@@ -80,7 +80,7 @@ resource "azurerm_network_security_group" "dev-nsg-app" {
 
 
 resource "azurerm_network_security_group" "dev-nsg-mgmt" {
-  name                = "dev-nsg1-app"
+  name                = "dev-nsg1-mgmt"
   location            = "${var.region}"
   resource_group_name = "${azurerm_resource_group.dev-res-1.name}"
 
