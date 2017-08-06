@@ -30,3 +30,9 @@ variable "os_password" {
     description = "Password for machine to be provisioned"
     type = "string"
 }
+
+variable "win_srv_count" {
+    description = "Number of windows servers to provison."
+    type = "string"
+    default = "3"
+}
