@@ -31,6 +31,13 @@ def get_host(host):
     return dict()
 
 
+CREDENTIALS = UserPassCredentials('','')
+
+COMPMGMT = ComputeManagementClient(CREDENTIALS, '')
+
+print(COMPMGMT.virtual_machines)
+
+
 HOSTS = ["51.140.72.134", "51.140.87.247", "51.140.86.218", "51.140.75.241"]
 
 PARSER = argparse.ArgumentParser(description="Azure dynamic inventory script.")
