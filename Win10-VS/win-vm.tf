@@ -35,8 +35,7 @@ resource "azurerm_virtual_machine" "dev-vm" {
   location              = "${var.region}"
   resource_group_name   = "${azurerm_resource_group.dev-res-1.name}"
   network_interface_ids = ["${azurerm_network_interface.dev-int.id}"]
-  vm_size               = "Standard_DS1_v2"
-
+  vm_size               = "Standard_D4_v2"
   storage_image_reference {
     publisher = "MicrosoftVisualStudio"
     offer= "VisualStudio"
