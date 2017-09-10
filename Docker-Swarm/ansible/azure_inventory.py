@@ -5,7 +5,8 @@
 
 import argparse
 import json
-from azure.common.credentials import UserPassCredentials
+import configparser
+from azure.common.credentials import ServicePrincipalCredentials    
 from azure.mgmt.compute import ComputeManagementClient
 
 
@@ -31,11 +32,58 @@ def get_host(host):
     return dict()
 
 
-CREDENTIALS = UserPassCredentials('','')
 
-COMPMGMT = ComputeManagementClient(CREDENTIALS, '')
+def get_machines(Compute_Management_Client):
+    '''returns list of all virtual machines from client'''
+    return Compute_Management_Client.virtual_machines.list_all()
 
-print(COMPMGMT.virtual_machines)
+
+def get_config(ini_file):
+    ''' return config from inifile '''
+    config = configparser.RawConfigParser(allow_no_value=False)
+    config.read_file(ini_file)
+    return confi
+
+DIRECTORY = os.path.dirname(os.path.realpath(__file__))
+INIFILE = open((DIRECTORY + "/.azureSubscription"))
+
+
+CONFIG = get_config()
+
+CLIENT_ID = CONFIG.get("accountDetails", "client_id")
+SECRET = CONFIG.get("accountDetails", "secret")
+TENANT = CONFIG.geT("accountDetails", "tenant")
+
+
+CREDENTIAL = ServicePrincipalCredentials(client_id=CLIENT_ID,
+                                         secret=SECRET,
+                                         tenant=TENANT)
+
+CMC = ComputeManagementClient(credentials=CREDENTIAL,
+                              subscription_id='4a30780b-23cd-4472-9f01-48473590a8a7')
+
+
+MACHINES = get_machines(CMC)
+
+for m in MACHINES:
+    
+    print ( "Name: ") 
+    print( m.name  )
+    print ( "Location: " )
+    print( m.location )
+    print( "network_profile: ")
+    print( m.network_profile)
+    print( "OS_Profile: ")
+    print( m.os_profile)
+    print()
+
+    network = m.network_profile
+
+    print( dir(network))
+
+
+
+#print(CMC)
 
 
 HOSTS = ["51.140.72.134", "51.140.87.247", "51.140.86.218", "51.140.75.241"]
@@ -49,5 +97,6 @@ if ARGS.list:
     print(get_output())
 elif ARGS.host:
     print(get_host(ARGS.host))
+
 
 
