@@ -54,7 +54,7 @@ CONFIG = get_config(INIFILE)
 CLIENT_ID = CONFIG.get("accountDetails", "client_id")
 SECRET = CONFIG.get("accountDetails", "secret")
 TENANT = CONFIG.get("accountDetails", "tenant")
-SUBSCRIPTION =  CONFIG.get("accountDetails", "subscription")
+SUBSCRIPTION = CONFIG.get("accountDetails", "subscription")
 
 
 CREDENTIAL = ServicePrincipalCredentials(client_id=CLIENT_ID,
@@ -69,19 +69,22 @@ MACHINES = get_machines(CMC)
 
 for m in MACHINES:
     
-    print ( "Name: ") 
-    print( m.name  )
-    print ( "Location: " )
-    print( m.location )
-    print( "network_profile: ")
-    print( m.network_profile)
-    print( "OS_Profile: ")
-    print( m.os_profile)
+    print("Name: " + m.name)
+    print("Location: " + m.location )
     print()
+    print("OS_Profile: ")
+    print(m.os_profile)
+    
+    ### ID In this object, has the ID of the network interface.
+    ### Use this to identify ip addresses.
+    network = m.network_profile.network_interfaces
 
-    network = m.network_profile
+    for n in network:
+        print()
+        print ("Network Interface ID: " + n.id)
 
-    print( dir(network))
+    print()
+    print("===="*20)
 
 
 
