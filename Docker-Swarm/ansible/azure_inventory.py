@@ -2,7 +2,8 @@
 '''
     azure dynamic inventory for ansible.
 '''
-
+import os
+import sys
 import argparse
 import json
 import configparser
@@ -42,17 +43,18 @@ def get_config(ini_file):
     ''' return config from inifile '''
     config = configparser.RawConfigParser(allow_no_value=False)
     config.read_file(ini_file)
-    return confi
+    return config
 
 DIRECTORY = os.path.dirname(os.path.realpath(__file__))
 INIFILE = open((DIRECTORY + "/.azureSubscription"))
 
 
-CONFIG = get_config()
+CONFIG = get_config(INIFILE)
 
 CLIENT_ID = CONFIG.get("accountDetails", "client_id")
 SECRET = CONFIG.get("accountDetails", "secret")
-TENANT = CONFIG.geT("accountDetails", "tenant")
+TENANT = CONFIG.get("accountDetails", "tenant")
+SUBSCRIPTION =  CONFIG.get("accountDetails", "subscription")
 
 
 CREDENTIAL = ServicePrincipalCredentials(client_id=CLIENT_ID,
@@ -60,7 +62,7 @@ CREDENTIAL = ServicePrincipalCredentials(client_id=CLIENT_ID,
                                          tenant=TENANT)
 
 CMC = ComputeManagementClient(credentials=CREDENTIAL,
-                              subscription_id='4a30780b-23cd-4472-9f01-48473590a8a7')
+                              subscription_id=SUBSCRIPTION)
 
 
 MACHINES = get_machines(CMC)
