@@ -73,39 +73,34 @@ NMC = NetworkManagementClient(credentials=CREDENTIAL,
 MACHINES = get_machines(CMC)
 
 for m in MACHINES:
-    
+    print("===="*20)
     print("Name: " + m.name)
     print("Location: " + m.location )
-    print()
-    print("OS_Profile: ")
-    print(m.os_profile)
+    print("Computer Name: " + m.os_profile.computer_name)
+    print("tags: " + json.dumps(m.tags) )
+    
     
     ### ID In this object, has the ID of the network interface.
     ### Use this to identify ip addresses.
     network = m.network_profile.network_interfaces
 
     for n in network:
-        
-        #ip = NMC.public_ip_addresses.list_all()
         interfaces = NMC.network_interfaces.list_all()
         ip_config = NMC.public_ip_addresses.list_all()
-        
 
         for inter in interfaces:
             if inter.id == n.id:
-                print()
-                print()
-                print("-----"*20)
-                print(inter)
-                print("-----"*20)
-                
+                for x in inter.ip_configurations:
+                    print ("Private IP: "+ x.private_ip_address)                    
+                    
 
-        
-            
-        
+                    for pip in ip_config:
+                        if pip.id == x.public_ip_address.id:
+                            print ("Public IP: "+ pip.ip_address)
+                            print()
 
     print()
-    print("===="*20)
+    
 
 
 
