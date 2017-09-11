@@ -9,7 +9,7 @@ import json
 import configparser
 from azure.common.credentials import ServicePrincipalCredentials    
 from azure.mgmt.compute import ComputeManagementClient
-
+from azure.mgmt.network import NetworkManagementClient
 
 
 
@@ -64,6 +64,11 @@ CREDENTIAL = ServicePrincipalCredentials(client_id=CLIENT_ID,
 CMC = ComputeManagementClient(credentials=CREDENTIAL,
                               subscription_id=SUBSCRIPTION)
 
+NMC = NetworkManagementClient(credentials=CREDENTIAL,
+                              subscription_id=SUBSCRIPTION)
+
+
+                              
 
 MACHINES = get_machines(CMC)
 
@@ -80,8 +85,24 @@ for m in MACHINES:
     network = m.network_profile.network_interfaces
 
     for n in network:
-        print()
-        print ("Network Interface ID: " + n.id)
+        
+        #ip = NMC.public_ip_addresses.list_all()
+        interfaces = NMC.network_interfaces.list_all()
+        ip_config = NMC.public_ip_addresses.list_all()
+        
+
+        for inter in interfaces:
+            if inter.id == n.id:
+                print()
+                print()
+                print("-----"*20)
+                print(inter)
+                print("-----"*20)
+                
+
+        
+            
+        
 
     print()
     print("===="*20)
