@@ -11,6 +11,7 @@ resource "azurerm_public_ip" "dev-public-ip-mgmt" {
 
   tags {
     environment = "Dev"
+    
   }
 }
 
@@ -75,6 +76,10 @@ resource "azurerm_virtual_machine" "mgmt-vm" {
 
   tags {
     environment = "Dev"
+    OS = "linux"
+    profile = "ansible-host"
+    
+    
   }
 }
 

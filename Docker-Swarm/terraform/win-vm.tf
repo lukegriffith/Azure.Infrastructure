@@ -11,6 +11,7 @@ resource "azurerm_public_ip" "dev-public-ip" {
 
   tags {
     environment = "Dev"
+    
   }
 }
 
@@ -83,6 +84,8 @@ resource "azurerm_virtual_machine" "dev-vm" {
 */
   tags {
     environment = "Dev"
+    OS = "Windows"
+    profile = "Docker"
   }
 }
 

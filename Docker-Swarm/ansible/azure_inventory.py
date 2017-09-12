@@ -7,6 +7,7 @@ import sys
 import argparse
 import json
 import configparser
+from pprint import PrettyPrinter
 from azure.common.credentials import ServicePrincipalCredentials    
 from azure.mgmt.compute import ComputeManagementClient
 from azure.mgmt.network import NetworkManagementClient
@@ -68,18 +69,35 @@ NMC = NetworkManagementClient(credentials=CREDENTIAL,
                               subscription_id=SUBSCRIPTION)
 
 
-                              
+
+class AzureMachine:
+    def __init__(self, name, location, tags, public_ip, private_ip):
+        self.name = name
+        self.location = location
+        self.tags = tags
+        self.public_ip = public_ip
+        self.private_ip = private_ip
+
+
 
 MACHINES = get_machines(CMC)
 
+Inventory = list()
+
 for m in MACHINES:
-    print("===="*20)
-    print("Name: " + m.name)
-    print("Location: " + m.location )
-    print("Computer Name: " + m.os_profile.computer_name)
-    print("tags: " + json.dumps(m.tags) )
     
-    
+    m_name = str()
+    m_location = str()
+    m_tags = list()
+    m_public_ip = str()
+    m_private_ip = str()
+
+
+    m_name = m.name
+    m_location = m.location
+    m_tags = m.tags
+
+
     ### ID In this object, has the ID of the network interface.
     ### Use this to identify ip addresses.
     network = m.network_profile.network_interfaces
@@ -91,20 +109,28 @@ for m in MACHINES:
         for inter in interfaces:
             if inter.id == n.id:
                 for x in inter.ip_configurations:
-                    print ("Private IP: "+ x.private_ip_address)                    
-                    
+                    m_private_ip = x.private_ip_address
 
                     for pip in ip_config:
                         if pip.id == x.public_ip_address.id:
-                            print ("Public IP: "+ pip.ip_address)
-                            print()
+                            m_public_ip = pip.ip_address
+                            
 
-    print()
     
 
+    azure_host = AzureMachine(name=m_name, location=m_location,
+                              tags=m_tags,public_ip =m_public_ip,
+                              private_ip=m_private_ip)
+
+    Inventory.append(azure_host)
 
 
-#print(CMC)
+
+pp = PrettyPrinter(indent=4)
+
+for m in Inventory:
+    pp.pprint(vars(m))
+    print()
 
 
 HOSTS = ["51.140.72.134", "51.140.87.247", "51.140.86.218", "51.140.75.241"]
@@ -112,12 +138,24 @@ HOSTS = ["51.140.72.134", "51.140.87.247", "51.140.86.218", "51.140.75.241"]
 PARSER = argparse.ArgumentParser(description="Azure dynamic inventory script.")
 PARSER.add_argument('--list', action='store_true')
 PARSER.add_argument('--host', type=str, required=False)
+PARSER.add_argument('--ToggleBoundry', action='store_true',)
 ARGS = PARSER.parse_args()
+
+if ARGS.ToggleBoundry:
+    b = CONFIG.get("settings", "boundry")
+
+    if b:
+        CONFIG.set("settings", "boundry", 0)
+    else:
+        CONFIG.set("settings", "boundry", 1)
+
 
 if ARGS.list:
     print(get_output())
 elif ARGS.host:
     print(get_host(ARGS.host))
+
+
 
 
 
