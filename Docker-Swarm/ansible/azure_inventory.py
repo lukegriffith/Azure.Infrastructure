@@ -37,8 +37,8 @@ class Azure_Inventory():
 
 
         credentials = ServicePrincipalCredentials(client_id=client_id,
-                                                       secret=secret,
-                                                       tenant=tenant)
+                                                  secret=secret,
+                                                  tenant=tenant)
 
         self.computeManager = ComputeManagementClient(credentials=credentials,
                                                       subscription_id=subscription)
