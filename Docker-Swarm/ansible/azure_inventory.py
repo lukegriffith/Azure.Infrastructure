@@ -52,7 +52,7 @@ class Azure_Inventory():
 
         self.get_machines(inventory)
 
-        if args.print:
+        if args.prettyPrint:
             self.prettyPrint(inventory)
 
         if args.list:
@@ -64,6 +64,9 @@ class Azure_Inventory():
     def get_machines(self, inventory_list):
 
         machines = self.computeManager.virtual_machines.list_all()
+
+        interfaces = self.networkManager.network_interfaces.list_all()
+        ip_config = self.networkManager.public_ip_addresses.list_all()
 
         for m in machines:
 
@@ -84,8 +87,7 @@ class Azure_Inventory():
 
             # this is a horrible itteration. want to remove.
             for n in network:
-                interfaces = self.networkManager.network_interfaces.list_all()
-                ip_config = self.networkManager.public_ip_addresses.list_all()
+
 
                 for inter in interfaces:
                     if inter.id == n.id:
@@ -96,7 +98,7 @@ class Azure_Inventory():
                                 if pip.id == x.public_ip_address.id:
                                     m_public_ip = pip.ip_address
 
-            azure_host = AzureMachine(name=m_name, location=m_location,
+            azure_host = Azure_Machine(name=m_name, location=m_location,
                                       tags=m_tags, public_ip=m_public_ip,
                                       private_ip=m_private_ip)
 
@@ -108,7 +110,7 @@ class Azure_Inventory():
         parser.add_argument('--list', action='store_true')
         parser.add_argument('--host', type=str, required=False)
         parser.add_argument('--ToggleBoundry', action='store_true',)
-        parser.add_argument('--print', action='store_true')
+        parser.add_argument('--prettyPrint', action='store_true')
         return parser.parse_args()
 
 
@@ -130,7 +132,7 @@ class Azure_Inventory():
             pp.pprint(i)
 
 
-    def output_inventory(inventory):
+    def output_inventory(self, inventory):
         
         inv = { "hosts": [] }
 
