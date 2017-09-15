@@ -65,8 +65,6 @@ class Azure_Inventory():
         self.networkManager = NetworkManagementClient(credentials=credentials,
                                                       subscription_id=subscription)
 
-        
-
         inventory = list()
 
         self.get_machines(inventory)
@@ -84,7 +82,7 @@ class Azure_Inventory():
 
         interfaces = self.networkManager.network_interfaces.list_all()
         ip_config = self.networkManager.public_ip_addresses.list_all()
-                
+
 
         for m in machines:
 
@@ -116,18 +114,17 @@ class Azure_Inventory():
                                     m_public_ip = pip.ip_address
 
             azure_host = Azure_Machine(name=m_name, location=m_location,
-                                      tags=m_tags, public_ip=m_public_ip,
-                                      private_ip=m_private_ip)
+                                       tags=m_tags, public_ip=m_public_ip,
+                                       private_ip=m_private_ip)
 
             inventory_list.append(azure_host)
 
             interfaces.reset()
             ip_config.reset()
 
-            
+
 
     def parse_args(self):
-
         parser = argparse.ArgumentParser(description="Azure dynamic inventory script.")
         parser.add_argument('--list', action='store_true')
         parser.add_argument('--host', type=str, required=False)
@@ -138,7 +135,6 @@ class Azure_Inventory():
 
 
     def getConfiguration(self, ini_file):
-        
         config = configparser.RawConfigParser(allow_no_value=False)
         config.read_file(ini_file)
         return config
