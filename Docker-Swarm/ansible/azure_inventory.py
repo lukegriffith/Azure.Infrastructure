@@ -46,12 +46,10 @@ class Azure_Inventory():
             if boundry:
                 boundry = 0
                 config.set("settings", "boundry", boundry)
-                print("this")
 
             elif not boundry:
                 boundry = 1
                 config.set("settings", "boundry", boundry)
-                print("that")
 
         ini_file = open(ini_path, "w")
         config.write(ini_file)
