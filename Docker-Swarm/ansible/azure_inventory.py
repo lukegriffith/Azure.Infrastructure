@@ -28,12 +28,33 @@ class Azure_Inventory():
         args = self.parse_args()
 
         ini_path = os.path.dirname(os.path.realpath(__file__)) + "/.azureSubscription"
+        ini_file = open(ini_path, "r")
 
-        config = self.getConfiguration(ini_path)
+        config = self.getConfiguration(ini_file)
+
         client_id = config.get("accountDetails", "client_id")
         secret = config.get("accountDetails", "secret")
         tenant = config.get("accountDetails", "tenant")
         subscription = config.get("accountDetails", "subscription")
+
+        boundry = int(config.get("settings", "boundry"))
+
+        print(args.toggleBoundry)
+        print(boundry)
+
+        if  args.toggleBoundry:
+            if boundry:
+                boundry = 0
+                config.set("settings", "boundry", boundry)
+                print("this")
+
+            elif not boundry:
+                boundry = 1
+                config.set("settings", "boundry", boundry)
+                print("that")
+
+        ini_file = open(ini_path, "w")
+        config.write(ini_file)
 
 
         credentials = ServicePrincipalCredentials(client_id=client_id,
@@ -56,10 +77,8 @@ class Azure_Inventory():
             self.prettyPrint(inventory)
 
         if args.list:
-            self.output_inventory(inventory)
+            self.output_inventory(inventory, boundry)
 
-
-        
 
     def get_machines(self, inventory_list):
 
@@ -67,6 +86,7 @@ class Azure_Inventory():
 
         interfaces = self.networkManager.network_interfaces.list_all()
         ip_config = self.networkManager.public_ip_addresses.list_all()
+                
 
         for m in machines:
 
@@ -88,7 +108,6 @@ class Azure_Inventory():
             # this is a horrible itteration. want to remove.
             for n in network:
 
-
                 for inter in interfaces:
                     if inter.id == n.id:
                         for x in inter.ip_configurations:
@@ -104,22 +123,26 @@ class Azure_Inventory():
 
             inventory_list.append(azure_host)
 
+            interfaces.reset()
+            ip_config.reset()
+
+            
+
     def parse_args(self):
 
         parser = argparse.ArgumentParser(description="Azure dynamic inventory script.")
         parser.add_argument('--list', action='store_true')
         parser.add_argument('--host', type=str, required=False)
-        parser.add_argument('--ToggleBoundry', action='store_true',)
+        parser.add_argument('--toggleBoundry', action='store_true',)
         parser.add_argument('--prettyPrint', action='store_true')
         return parser.parse_args()
 
 
 
-    def getConfiguration(self, ini_path):
-
+    def getConfiguration(self, ini_file):
+        
         config = configparser.RawConfigParser(allow_no_value=False)
-        file = open(ini_path)
-        config.read_file(file)
+        config.read_file(ini_file)
         return config
 
 
@@ -129,16 +152,19 @@ class Azure_Inventory():
         pp = PrettyPrinter(indent=2)
 
         for i in inventory:
-            pp.pprint(i)
+            pp.pprint(vars(i))
 
 
-    def output_inventory(self, inventory):
-        
-        inv = { "hosts": [] }
+    def output_inventory(self, inventory, boundry_toggle):
+
+        inv = {"hosts": []}
 
         for i in inventory:
-            
-            inv["hosts"].append(i.public_ip)
+
+            if boundry_toggle:
+                inv["hosts"].append(i.public_ip)
+            else:
+                inv["hosts"].append(i.private_ip)
 
 
         print(inv)
