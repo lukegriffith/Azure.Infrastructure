@@ -151,12 +151,14 @@ class Azure_Inventory():
 
     def output_inventory(self, inventory, boundry_toggle):
 
-        inv = {"hosts": []}
+        inv = {"hosts": [], "_meta": {"hostvars":{}}}
 
         for i in inventory:
 
             if boundry_toggle:
                 inv["hosts"].append(i.public_ip)
+
+
             else:
                 inv["hosts"].append(i.private_ip)
 
